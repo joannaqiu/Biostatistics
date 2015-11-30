@@ -1,0 +1,63 @@
+# in collaboration with SukKyu Chung, KangHee Han and Bonnie Xu
+
+Code for Figure 1:
+
+library(ggplot)
+ggplot(data=table1,aes(x=Migraines,y=Percentage,fill=factor(Diabetes)))+geom_bar(stat="identity",width=.5)+theme(text=element_text(size=15))
+
+Code for Figure 2: 
+
+#recode
+d$newMigraine[d$ICD734==0] <- "No"
+d$newMigraine[is.na(d$newMigraine)] <- "Yes"
+
+d$newIbuprofen[d$IBUPROFEN==0] <- "No"
+d$newIbuprofen[is.na(d$newIbuprofen)] <- "Yes"
+
+library(ggplot2)
+#plotting Interaction plot
+ibuprofen_interaction <- ggplot(data=d, aes(x=newIbuprofen, y=Diabetes.new, group=newMigraine,colour=newMigraine,size=2)) + stat_summary(fun.y=mean,geom="line")+stat_summary(fun.y=mean,geom="point")+labs(
+  x = "Ibuprofen",y = "Rate of Diabetes")+theme(text = element_text(size=30))
+ibuprofen_interaction
+
+#recode
+d$newMigraine[d$ICD734==0] <- "No"
+d$newMigraine[is.na(d$newMigraine)] <- "Yes"
+
+d$newTylenol[d$TYLENOL==0] <- "No"
+d$newTylenol[is.na(d$newTylenol)] <- "Yes"
+
+#plotting Interaction plot
+library(ggplot2)
+tylenol_interaction <- ggplot(data=d, aes(x=newTylenol, y=Diabetes.new, group=newMigraine,colour=newMigraine, size=2)) + 
+  stat_summary(fun.y=mean,geom="line")+stat_summary(fun.y=mean,geom="point")+labs(x = "Tylenol", y = "Rate of Diabetes")+
+  theme(text = element_text(size=30))
+tylenol_interaction
+
+
+
+Code for Figure 3: 
+
+#recode 
+d$newTylenol[d$TYLENOL==0] <- "No"
+d$newTylenol[is.na(d$newTylenol)] <- "Yes"
+
+d$newHeadache[d$ICD784==0] <- "No"
+d$newHeadache[is.na(d$newHeadache)] <- "Yes"
+
+
+#plotting interaction plot
+library(ggplot2)
+headache_interaction <- ggplot(data=d, aes(x=new2, y=Diabetes.new, group=newHeadache,colour=newHeadache,size=2)) + stat_summary(fun.y=mean,geom="line")+stat_summary(fun.y=mean,geom="point")+labs(
+  x = "Tylenol",y = "Rate of Diabetes")+theme(text = element_text(size=30))
+headache_interaction
+
+
+Code for Logistic Model:
+#Recode for diabetes II variable
+d$Diabetes.new[d$Diabetes == 2] <- 1 # type 2 
+d$Diabetes.new[d$Diabetes != 2] <- 0 # No type 2
+
+#Logistic Model
+m.518 <- glm(d$Diabetes.new ~ d$IBUPROFEN + d$TYLENOL + d$ICD346 + d$ICD784 + d$IBUPROFEN*d$ICD346 +d$TYLENOL*d$ICD346 + d$IBUPROFEN*d$ICD784 + d$TYLENOL*d$ICD784 + d$IBUPROFEN*d$TYLENOL + d$HypertensionDX + d$BMI + d$Age + d$Gender , family = "binomial")
+summary(m.518)
